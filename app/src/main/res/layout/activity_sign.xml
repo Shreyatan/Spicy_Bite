@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".SignActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
+
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logo"
+            android:layout_marginTop="40dp"
+            android:contentDescription="App Logo"/>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:text="Waves Of Food"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deliver Favorite Food"
+            android:textColor="#4CD964"
+            android:textSize="16sp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Sign Up Here -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign Up Here"
+            android:textColor="#4CD964"
+            android:textSize="18sp"
+            android:layout_marginTop="20dp"/>
+
+        <!-- Name Input -->
+        <EditText
+            android:id="@+id/userName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Name"
+            android:textColor="@color/black"
+            android:drawableStart="@drawable/user_plus"
+            android:padding="12dp"
+            android:background="@drawable/whitebutton"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Email or Phone Input -->
+        <EditText
+            android:id="@+id/emailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Email or Phone Number"
+            android:drawableStart="@drawable/mail"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/whitebutton"
+            android:layout_marginTop="12dp"/>
+
+        <!-- Password Input -->
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Password"
+            android:drawableStart="@drawable/lock"
+            android:padding="12dp"
+            android:textColor="@color/black"
+            android:background="@drawable/whitebutton"
+            android:layout_marginTop="12dp"
+            android:inputType="textPassword"/>
+
+        <!-- Sign Up With Social -->
+        <TextView
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Or\nSign Up With"
+            android:textAlignment="center"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Social Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <Button
+                android:id="@+id/fbbtn"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="Facebook"
+                android:drawableStart="@drawable/facebook"
+                android:background="@drawable/whitebutton"
+                android:elevation="6dp"
+                android:translationZ="6dp"/>
+
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/googlebtn"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Google"
+                android:textColor="@color/black"
+                android:drawableStart="@drawable/google"
+                android:background="@drawable/whitebutton"
+                android:elevation="6dp"
+                android:translationZ="6dp"/>
+        </LinearLayout>
+
+        <!-- Create Account Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/createaccountbutton"
+            android:layout_width="157dp"
+            android:layout_height="57dp"
+            android:text="Create Account"
+            android:textColor="@android:color/white"
+            android:background="@drawable/greenbuttongradient"
+            android:layout_marginTop="20dp"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:elevation="6dp"
+            android:translationZ="6dp"/>
+
+        <!-- Already Have Account -->
+        <TextView
+            android:id="@+id/alreadyhavebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Already Have An Account?"
+            android:textColor="#4CD964"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+</ScrollView>
