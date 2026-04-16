@@ -37,7 +37,7 @@
                 android:src="@drawable/menu1"/>
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/foodImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:srcCompat="@tools:sample/avatars" />
@@ -48,7 +48,7 @@
             android:id="@+id/tvFoodName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Herbal Pancake"
+            android:text="Food Name"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"

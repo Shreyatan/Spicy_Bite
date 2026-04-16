@@ -29,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="sans-serif"
-            android:text="Waves Of Food"
+            android:text="SpicyBite"
+            android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -74,7 +75,10 @@
             android:textColor="@color/black"
             android:background="@drawable/whitebutton"
             android:layout_marginTop="12dp"/>
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
         <!-- Password Input -->
         <EditText
             android:id="@+id/password"
@@ -83,10 +87,34 @@
             android:hint="Password"
             android:drawableStart="@drawable/lock"
             android:padding="12dp"
+            android:paddingEnd="45dp"
             android:textColor="@color/black"
             android:background="@drawable/whitebutton"
-            android:layout_marginTop="12dp"
+
             android:inputType="textPassword"/>
+            <!-- Eye Icon -->
+            <ImageView
+                android:id="@+id/eyeIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/eye_hide"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/passwordStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="12sp"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="start"/>
+
 
         <!-- Sign Up With Social -->
         <TextView
@@ -103,36 +131,24 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="12dp">
-
-            <Button
-                android:id="@+id/fbbtn"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:textColor="@color/black"
-                android:text="Facebook"
-                android:drawableStart="@drawable/facebook"
-                android:background="@drawable/whitebutton"
-                android:elevation="6dp"
-                android:translationZ="6dp"/>
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="wrap_content"/>
-
-            <Button
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="24dp">
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/googlebtn"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_weight="1"
                 android:text="Google"
-                android:textColor="@color/black"
+                android:textAllCaps="false"
+                android:textSize="16sp"
                 android:drawableStart="@drawable/google"
-                android:background="@drawable/whitebutton"
+                android:drawablePadding="4dp"
+
+                android:background="@drawable/edittextshape"
                 android:elevation="6dp"
-                android:translationZ="6dp"/>
+                android:padding="12dp"
+                android:gravity="center_vertical|center_horizontal"/>
         </LinearLayout>
+
 
         <!-- Create Account Button -->
         <androidx.appcompat.widget.AppCompatButton

@@ -1,22 +1,196 @@
 package com.example.spicybite
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
+
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+
+import com.google.firebase.auth.FirebaseAuth
+
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.*
 import com.example.spicybite.databinding.ActivityPayOutBinding
+import com.example.spicybite.model.OrderDetails
 
 class PayOutActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var databaseReference: DatabaseReference
+
+    private lateinit var name: String
+    private lateinit var address: String
+    private lateinit var phone: String
+    private lateinit var totalAmount: String
+
+    private var foodItemName: ArrayList<String> = arrayListOf()
+    private var foodItemPrice: ArrayList<String> = arrayListOf()
+    private var foodItemImage: ArrayList<String> = arrayListOf()
+    private var foodItemDescription: ArrayList<String> = arrayListOf()
+    private var foodItemIngredient: ArrayList<String> = arrayListOf()
+    private var foodItemQuantities: ArrayList<Int> = arrayListOf()
     lateinit var binding: ActivityPayOutBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
         binding = ActivityPayOutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.PlaceMyOrder.setOnClickListener {
-            val bottomSheetDialog = CongratsBottomSheet()
-            bottomSheetDialog.show(supportFragmentManager, "Test")
+        auth = FirebaseAuth.getInstance()
+        databaseReference = FirebaseDatabase.getInstance().reference
+        setUserData()
+
+        foodItemName = intent.getStringArrayListExtra("foodItemName") ?: arrayListOf()
+        foodItemPrice = intent.getStringArrayListExtra("foodItemPrice") ?: arrayListOf()
+        foodItemImage = intent.getStringArrayListExtra("foodItemImage") ?: arrayListOf()
+        foodItemDescription = intent.getStringArrayListExtra("foodItemDescription") ?: arrayListOf()
+        foodItemIngredient = intent.getStringArrayListExtra("foodItemIngredient") ?: arrayListOf()
+
+        val receivedQuantities = intent.getIntegerArrayListExtra("foodItemQuantities")
+        foodItemQuantities = receivedQuantities ?: arrayListOf()
+
+        val prices = foodItemPrice
+        val quantities = if (foodItemQuantities.isNotEmpty()) {
+            foodItemQuantities
         }
+        else {
+            ArrayList(List(prices.size) { 1 })
+        }
+        totalAmount = if (prices.isEmpty()) {
+            "₹0"
+        } else {
+            "₹" + calculateTotalAmount(prices, quantities).toString()
+        }
+        
+        binding.etTotalAmount.isEnabled = false
+        binding.etTotalAmount.setText(totalAmount)
+        binding.backButton.setOnClickListener {
+            finish()
+        }
+
+
+        binding.PlaceMyOrder.setOnClickListener {
+            //get data from textview
+            name = binding.name.text.toString()
+            address = binding.address.text.toString()
+            phone = binding.phone.text.toString()
+            if(name.isBlank()||address.isBlank()||phone.isBlank()){
+                Toast.makeText(this,"please enter all details",Toast.LENGTH_SHORT).show()
+
+            }else{
+                placeOrder()
+            }
         }
     }
+
+    private fun placeOrder() {
+
+        val userId = auth.currentUser?.uid ?: ""
+        val time: Long = System.currentTimeMillis()
+        val pushKey: String? = databaseReference.child("Order Details").push().key
+
+        val orderDetails = OrderDetails().apply {
+            userUid = userId
+            userName = name
+            foodNames = foodItemName
+            foodImages = foodItemImage
+            foodPrices = foodItemPrice
+            foodQuantities = foodItemQuantities
+            address = this@PayOutActivity.address
+            totalPrice = totalAmount
+            phoneNumber = phone
+            orderAccepted = false
+            paymentReceived = false
+            itemPushKey = pushKey
+            currentTime = time
+        }
+
+        val orderReference =
+            databaseReference.child("Order Details").child(pushKey!!)
+
+        orderReference.setValue(orderDetails).addOnSuccessListener {
+            val bottomSheetDialog = CongratsBottomSheet()
+            bottomSheetDialog.show(supportFragmentManager, "Test")
+
+            removeItemFromCart()
+
+            addOrderToHistory(orderDetails)
+
+        }
+            .addOnFailureListener {
+                Toast.makeText(this, "Order Failed", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun addOrderToHistory(orderDetails: OrderDetails) {
+
+        val userId = auth.currentUser?.uid ?: return
+
+        databaseReference
+            .child("user")
+            .child(userId)
+            .child("BuyHistory")
+            .child(orderDetails.itemPushKey!!)   // ✅ SAME KEY
+            .setValue(orderDetails)
+            .addOnSuccessListener {
+                // Toast.makeText(this, "Order Saved in History", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun removeItemFromCart() {
+
+        val userId = auth.currentUser?.uid ?: return
+
+        val cartItemsReference = databaseReference
+            .child("user")
+            .child(userId)
+            .child("cartItems")
+
+        cartItemsReference.removeValue()
+    }
+
+    private fun calculateTotalAmount(prices: ArrayList<String>, quantities: ArrayList<Int>): Int {
+
+        var totalAmount = 0
+
+        for (i in prices.indices) {
+
+            val price = prices[i]
+                .replace("₹", "")
+                .replace("$", "")
+                .toIntOrNull() ?: 0
+
+            // agar quantity list empty ho to default 1
+            val quantity = if (i < quantities.size)
+                quantities[i]
+            else
+                1
+
+            totalAmount += price * quantity
+        }
+
+        return totalAmount
+    }
+
+    private fun setUserData() {
+        val user: FirebaseUser? = auth.currentUser
+        if (user != null) {
+            val userId: String = user.uid
+            val userReference: DatabaseReference = databaseReference.child("user").child(userId)
+            userReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val userName = snapshot.child("name").value.toString()
+                        val userAddress = snapshot.child("address").value.toString()
+                        val userPhone = snapshot.child("phone").value.toString()
+                        binding.name.setText(userName)
+                        binding.address.setText(userAddress)
+                        binding.phone.setText(userPhone)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+            })
+        }
+    }
+}

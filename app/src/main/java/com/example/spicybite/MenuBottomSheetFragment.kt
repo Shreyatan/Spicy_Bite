@@ -20,9 +20,10 @@ import com.google.firebase.database.ValueEventListener
 //
 class MenuBottomSheetFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentMenuBottomSheetBinding
+    private var _binding: FragmentMenuBottomSheetBinding? = null
+    private val binding get() = _binding!!
     private lateinit var database: FirebaseDatabase
-    private lateinit var menuItem: MutableList<MenuItem>
+    private  var menuItem: MutableList<MenuItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,15 +35,19 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentMenuBottomSheetBinding.inflate(inflater, container, false)
+        _binding = FragmentMenuBottomSheetBinding.inflate(inflater, container, false)
+
         binding.buttonBack.setOnClickListener {
-
-        dismiss()
+            dismiss()
         }
-       retrieveMenuItems()
 
+        retrieveMenuItems()
 
         return binding.root
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun retrieveMenuItems() {
@@ -59,7 +64,10 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
 
                 }
 
-                setAdapter()
+                // ✅ Safe check if fragment still attached
+                if (isAdded && context != null) {
+                    setAdapter()
+                }
 
         }
 
@@ -70,13 +78,11 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
 
 
 
-    private fun setAdapter(){
+    private fun setAdapter() {
 
-       val adapter = MenuAdapter(menuItem, requireContext())
+        if (!isAdded || _binding == null) return
 
-       binding.menuRecyclerView.layoutManager =
-           LinearLayoutManager(requireContext())
-
-       binding.menuRecyclerView.adapter = adapter
-   }
+        binding.menuRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.menuRecyclerView.adapter = MenuAdapter(menuItem, requireContext())
+    }
 }

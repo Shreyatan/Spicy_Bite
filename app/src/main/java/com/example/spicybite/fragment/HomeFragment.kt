@@ -21,7 +21,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class HomeFragment : Fragment() {
-    private lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private lateinit var database: FirebaseDatabase
     private lateinit var menuItem: MutableList<MenuItem>
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,21 +31,25 @@ class HomeFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+    ): View {
+
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
         binding.btnViewMenu.setOnClickListener {
             val bottomSheetDialog = MenuBottomSheetFragment()
-            bottomSheetDialog.show(parentFragmentManager, "Test")
+            bottomSheetDialog.show(parentFragmentManager, "menu")
         }
 
-        //retrieve popular item
         retrieveAndDisplayPopularItems()
+
         return binding.root
-
-
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun retrieveAndDisplayPopularItems() {
@@ -71,16 +76,21 @@ class HomeFragment : Fragment() {
     }
 
     private fun randomPopularItems() {
-        //shuffled list
+
+        if (menuItem.isEmpty()) return
+
         val index = menuItem.indices.toList().shuffled()
-        val numItemToShow = 6
-        val subsetMenuItems: List<MenuItem> = index.take(numItemToShow).map {
+        val numItemToShow = minOf(6, menuItem.size)
+
+        val subsetMenuItems = index.take(numItemToShow).map {
             menuItem[it]
         }
+
         setPopularAdapter(subsetMenuItems)
     }
-
     private fun setPopularAdapter(subsetMenuItems: List<MenuItem>) {
+
+        if (!isAdded) return
 
         val adapter = MenuAdapter(subsetMenuItems, requireContext())
         binding.rvPopular.layoutManager = LinearLayoutManager(requireContext())

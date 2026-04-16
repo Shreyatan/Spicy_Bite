@@ -45,20 +45,33 @@ class CartAdapter(
 
             // ➕ Plus
             btnPlus.setOnClickListener {
+
                 item.foodQuantity?.let {
+
                     val newQty = it + 1
                     item.foodQuantity = newQty
                     tvQty.text = newQty.toString()
+
+                    item.itemKey?.let { key ->
+                        cartItemsReference.child(key).child("foodQuantity").setValue(newQty)
+                    }
                 }
             }
 
             // ➖ Minus
             btnMinus.setOnClickListener {
+
                 item.foodQuantity?.let {
+
                     if (it > 1) {
+
                         val newQty = it - 1
                         item.foodQuantity = newQty
                         tvQty.text = newQty.toString()
+
+                        item.itemKey?.let { key ->
+                            cartItemsReference.child(key).child("foodQuantity").setValue(newQty)
+                        }
                     }
                 }
             }
@@ -115,7 +128,14 @@ class CartAdapter(
             }
         })
     }
-
+    // Add this function in your CartAdapter
+    fun getUpdatedItemsQuantities(): MutableList<Int> {
+        val quantities = mutableListOf<Int>()
+        for (item in cartItems) {
+            quantities.add(item.foodQuantity ?: 1)
+        }
+        return quantities
+    }
     private fun removeItem(position: Int, uniqueKey: String) {
         cartItemsReference.child(uniqueKey).removeValue()
             .addOnSuccessListener {

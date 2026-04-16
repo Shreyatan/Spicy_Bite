@@ -10,15 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpicyBite">
         <activity
+            android:name=".recentOrderItems"
+            android:exported="false" />
+        <activity
             android:name=".DetailsActivity"
             android:exported="false" />
         <activity
             android:name=".PayOutActivity"
             android:exported="false" />
-        <activity
-            android:name=".MainActivity"/>
-        <activity
-            android:name=".LoginActivity"/>
+        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity" />
         <activity
             android:name=".SignActivity"
             android:exported="true"

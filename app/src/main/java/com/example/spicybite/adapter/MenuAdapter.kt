@@ -75,7 +75,7 @@ class MenuAdapter(
 
             val uri = Uri.parse(menuItem.foodImage)
 
-            Glide.with(requireContext)
+            Glide.with(binding.root.context)
                 .load(uri)
                 .into(menuImage)
         }

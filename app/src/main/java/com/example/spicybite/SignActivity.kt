@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 
 class SignActivity : AppCompatActivity() {
+    private var isPasswordVisible = false
     private lateinit var email: String
     private lateinit var password: String
     private lateinit var username: String
@@ -71,7 +72,59 @@ class SignActivity : AppCompatActivity() {
 
         }
 
+        binding.eyeIcon.setOnClickListener {
 
+            if (isPasswordVisible) {
+                // 🔒 HIDE PASSWORD
+                binding.password.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or
+                            android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+                binding.eyeIcon.setImageResource(R.drawable.eye_hide)
+
+            } else {
+                // 👁 SHOW PASSWORD
+                binding.password.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or
+                            android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
+                binding.eyeIcon.setImageResource(R.drawable.eye)
+
+            }
+
+            // cursor last position
+            binding.password.setSelection(binding.password.text.length)
+
+            isPasswordVisible = !isPasswordVisible
+        }
+        binding.password.addTextChangedListener(object : android.text.TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                val password = s.toString()
+
+                val pattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{7,}$")
+
+                if (password.isEmpty()) {
+                    // 👇 kuch nahi dikhega initially
+                    binding.passwordStatus.text = ""
+
+                } else if (password.matches(pattern)) {
+                    // ✅ Strong
+                    binding.passwordStatus.text = "Strong Password ✅"
+                    binding.passwordStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+
+                } else {
+                    // ❌ Weak
+                    binding.passwordStatus.text = "Weak Password ❌"
+                    binding.passwordStatus.setTextColor(resources.getColor(android.R.color.holo_red_dark))
+                }
+            }
+
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
     }
     private val launcher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -124,7 +177,7 @@ class SignActivity : AppCompatActivity() {
         username=binding.userName.text.toString()
         email=binding.emailAddress.text.toString().trim()
         password=binding.password.text.toString().trim()
-        val user = UserModel(username, email, password)
+        val user = UserModel(username, email, "")
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             database.child("user").child(userId).setValue(user)

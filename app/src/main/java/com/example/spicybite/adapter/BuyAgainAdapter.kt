@@ -1,15 +1,21 @@
 package com.example.spicybite.adapter
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.spicybite.PayOutActivity
 import com.example.spicybite.databinding.BuyAgainItemBinding
 
 
 class BuyAgainAdapter(
-    private val buyAgainFoodName: ArrayList<String>,
-    private val buyAgainFoodPrice: ArrayList<String>,
-    private val buyAgainFoodImage: ArrayList<Int>
+    val buyAgainFoodName: MutableList<String>,
+    val buyAgainFoodPrice: MutableList<String>,
+    val buyAgainFoodImage: MutableList<String>,
+    private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<BuyAgainAdapter.BuyAgainViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BuyAgainViewHolder {
@@ -36,16 +42,37 @@ class BuyAgainAdapter(
         private val binding: BuyAgainItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(foodName: String, foodPrice: String, foodImage: Int) {
+        fun bind(foodName: String, foodPrice: String, foodImage: String) {
 
             binding.recentFoodName.text = foodName
             binding.recentFoodPrice.text = foodPrice
-            binding.recentImage.setImageResource(foodImage)
-
-            // Buy Again Button Click
+            if (!foodImage.isNullOrEmpty()) {
+                val uri = Uri.parse(foodImage)
+                Glide.with(binding.root.context)
+                    .load(uri)
+                    .into(binding.recentImage)
+            }
+            // ✅ 1. ITEM CLICK → OPEN DETAILS
             binding.root.setOnClickListener {
-                // Yaha future me click logic daal sakti ho
+                onItemClick(adapterPosition)
+            }
+
+            // ✅ 2. BUTTON CLICK → DIRECT BUY AGAIN
+            binding.btnBuyAgain.setOnClickListener {
+
+                val context = binding.root.context
+
+                val intent = Intent(context, PayOutActivity::class.java)
+
+                intent.putStringArrayListExtra("foodItemName", arrayListOf(foodName))
+                intent.putStringArrayListExtra("foodItemPrice", arrayListOf(foodPrice))
+                intent.putStringArrayListExtra("foodItemImage", arrayListOf(foodImage))
+                intent.putStringArrayListExtra("foodItemDescription", arrayListOf(""))
+                intent.putStringArrayListExtra("foodItemIngredient", arrayListOf(""))
+                intent.putIntegerArrayListExtra("foodItemQuantities", arrayListOf(1))
+
+                context.startActivity(intent)
             }
         }
+        }
     }
-}

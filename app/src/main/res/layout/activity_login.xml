@@ -56,23 +56,52 @@
             android:layout_height="50dp"
             android:textColor="@color/black"
             android:hint="Email or Phone Number"
+            android:inputType="textEmailAddress"
             android:drawableStart="@drawable/mail"
             android:padding="12dp"
             android:background="@drawable/whitebutton"
             android:layout_marginTop="16dp"/>
 
         <!-- Password Input -->
-        <EditText
-            android:id="@+id/passwordlogin"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="Password"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+            <!-- Password Input -->
+            <EditText
+                android:id="@+id/passwordlogin"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Password"
+                android:drawableStart="@drawable/lock"
+                android:padding="12dp"
+                android:paddingEnd="45dp"
+                android:textColor="@color/black"
+                android:background="@drawable/whitebutton"
+
+                android:inputType="textPassword"/>
+            <!-- Eye Icon -->
+            <ImageView
+                android:id="@+id/eyeIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/eye_hide"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="12dp"
+                android:clickable="true"
+                android:focusable="true"/>
+        </RelativeLayout>
+        <!-- Forgot Password -->
+        <TextView
+            android:id="@+id/forgotpassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot password?"
             android:textColor="@color/black"
-            android:drawableStart="@drawable/lock"
-            android:padding="12dp"
-            android:background="@drawable/whitebutton"
-            android:layout_marginTop="12dp"
-            android:inputType="textPassword"/>
+            android:textSize="14sp"
+            android:layout_gravity="end"
+            android:layout_marginTop="6dp"/>
 
         <!-- Continue With -->
         <TextView
@@ -89,36 +118,24 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="12dp">
-
-            <Button
-                android:layout_width="0dp"
-                android:id="@+id/facebooklogin"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="Facebook"
-                android:drawableStart="@drawable/facebook"
-                android:background="@drawable/whitebutton"
-                android:elevation="6dp"
-                android:textColor="@color/black"
-                android:translationZ="6dp"/>
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="wrap_content"/>
-
-            <Button
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="24dp">
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/googlelogin"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_weight="1"
                 android:text="Google"
-                android:textColor="@color/black"
+                android:textAllCaps="false"
+                android:textSize="16sp"
                 android:drawableStart="@drawable/google"
-                android:background="@drawable/whitebutton"
+                android:drawablePadding="4dp"
+
+                android:background="@drawable/edittextshape"
                 android:elevation="6dp"
-                android:translationZ="6dp"/>
+                android:padding="12dp"
+                android:gravity="center_vertical|center_horizontal"/>
         </LinearLayout>
+
 
         <!-- Login Button -->
         <Button

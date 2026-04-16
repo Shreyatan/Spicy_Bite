@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 
 class LoginActivity : AppCompatActivity() {
+    private var isPasswordVisible = false
     private lateinit var email: String
     private lateinit var password: String
     private lateinit var auth: FirebaseAuth
@@ -71,6 +72,66 @@ class LoginActivity : AppCompatActivity() {
             val signInIntent=googleSignInClient.signInIntent
             launcher.launch(signInIntent)
         }
+        binding.eyeIcon.setOnClickListener {
+
+            if (isPasswordVisible) {
+                // 🔒 HIDE PASSWORD
+                binding.passwordlogin.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or
+                            android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+                binding.eyeIcon.setImageResource(R.drawable.eye_hide)
+
+            } else {
+                // 👁 SHOW PASSWORD
+                binding.passwordlogin.inputType =
+                    android.text.InputType.TYPE_CLASS_TEXT or
+                            android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+
+                binding.eyeIcon.setImageResource(R.drawable.eye)
+
+            }
+
+            // cursor last position
+            binding.passwordlogin.setSelection(binding.passwordlogin.text.length)
+
+            isPasswordVisible = !isPasswordVisible
+        }
+        binding.forgotpassword.setOnClickListener {
+
+            val email = binding.emaillogin.text.toString().trim()
+
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Enter valid email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            sendPasswordResetLink(email)
+        }
+
+    }
+    private fun sendPasswordResetLink(email: String) {
+
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+
+                if (task.isSuccessful) {
+                    Toast.makeText(
+                        this,
+                        "Reset link sent to your email",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                } else {
+                    Toast.makeText(this, "Check your email for reset link 📩", Toast.LENGTH_LONG).show()
+                }
+            }
+
     }
 
     private val launcher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -79,27 +140,41 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 val account: GoogleSignInAccount = task.result
                 val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                auth.signInWithCredential(credential).addOnCompleteListener { it ->
-                    if (it.isSuccessful) {
+                auth.signInWithCredential(credential).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
 
                         val user = auth.currentUser
+                        val uid = user?.uid ?: return@addOnCompleteListener
 
-                        val userModel = UserModel(
-                            user?.displayName ?: "",
-                            user?.email ?: "",
-                            ""
-                        )
+                        database.child("user").child(uid).get()
+                            .addOnSuccessListener { snapshot ->
 
-                        val userId = user?.uid
-                        if (userId != null) {
-                            database.child("user").child(userId).setValue(userModel)
-                        }
-                        Toast.makeText(this, "Sign in with Google successfully", Toast.LENGTH_SHORT)
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
+                                if (snapshot.exists()) {
+                                    // ✅ Already User
+                                    Toast.makeText(this, "User Login Success", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                    finish()
+
+                                } else {
+                                    // ❌ First time → create user
+                                    val userData = UserModel(
+                                        user?.displayName ?: "",
+                                        user?.email ?: "",
+                                        ""
+                                    )
+
+                                    database.child("user").child(uid).setValue(userData)
+
+                                    Toast.makeText(this, "New User Created", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, MainActivity::class.java))
+                                    finish()
+                                }
+                            }
+
                     } else {
-                        Toast.makeText(this, "Sign in with Google failed", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show()
+
+
                     }
                 }
             }
@@ -107,27 +182,39 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun createUser() {
         auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    if (user != null) {
-                        updateUi(user)
-                    }
-                    Toast.makeText(this,"Login Successful",Toast.LENGTH_SHORT).show()
-                }
-                else{
+
+                    val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
+
+                    // 🔥 CHECK USER NODE
+                    database.child("user").child(uid).get()
+                        .addOnSuccessListener { snapshot ->
+
+                            if (snapshot.exists()) {
+                                // ✅ USER LOGIN SUCCESS
+                                Toast.makeText(this,"User Login Successful",Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, MainActivity::class.java))
+                                finish()
+
+                            } else {
+                                // ❌ ADMIN TRYING USER APP
+                                Toast.makeText(this,"Access Denied! Not a User",Toast.LENGTH_SHORT).show()
+                                auth.signOut()
+                            }
+                        }
+
+                } else {
                     Toast.makeText(this,"Login Failed",Toast.LENGTH_SHORT).show()
                 }
             }
-
     }
     override fun onStart() {
         super.onStart()
-        val currentUser:FirebaseUser?=auth.currentUser
-        if(currentUser!=null)
-        {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+        val currentUser: FirebaseUser? = auth.currentUser
+
+        if (currentUser != null) {
+            auth.signOut()   // 🔥 force login again
         }
     }
 
