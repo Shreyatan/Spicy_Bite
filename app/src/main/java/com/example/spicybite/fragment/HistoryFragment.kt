@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 import com.example.spicybite.R
 import com.example.spicybite.adapter.BuyAgainAdapter
 import com.example.spicybite.databinding.FragmentHistoryBinding
-import com.example.spicybite.model.OrderDetails
+import com.example.spicybite.model.OrderModel
 import com.example.spicybite.recentOrderItems
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -30,7 +30,7 @@ class HistoryFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
     private lateinit var userId: String
-    private var listOfOrderItem: MutableList<OrderDetails> = mutableListOf()
+    private var listOfOrderItem: MutableList<OrderModel> = mutableListOf()
 
 
     override fun onCreateView(
@@ -119,7 +119,7 @@ class HistoryFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 listOfOrderItem.clear()
                 for (buySnapShot in snapshot.children) {
-                    val buyHistoryItem = buySnapShot.getValue(OrderDetails::class.java)
+                    val buyHistoryItem = buySnapShot.getValue(OrderModel::class.java)
 
                     buyHistoryItem?.let {
                         listOfOrderItem.add(it)

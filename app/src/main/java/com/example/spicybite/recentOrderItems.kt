@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.spicybite.adapter.RecentOrderAdapter
 import com.example.spicybite.databinding.ActivityRecentOrderItemsBinding
-import com.example.spicybite.model.OrderDetails
+import com.example.spicybite.model.OrderModel
 
 class recentOrderItems : AppCompatActivity() {
 
@@ -22,7 +22,7 @@ class recentOrderItems : AppCompatActivity() {
 
         // 🔥 Get data from intent
         val orderDetails =
-            intent.getSerializableExtra("RecentBuyOrderItem") as? OrderDetails
+            intent.getSerializableExtra("RecentBuyOrderItem") as? OrderModel
 
         val foodNames = orderDetails?.foodNames ?: arrayListOf()
         val foodPrices = orderDetails?.foodPrices ?: arrayListOf()

@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.example.spicybite.databinding.ActivityPayOutBinding
-import com.example.spicybite.model.OrderDetails
+import com.example.spicybite.model.OrderModel
 
 class PayOutActivity : AppCompatActivity() {
 
@@ -84,43 +84,39 @@ class PayOutActivity : AppCompatActivity() {
     private fun placeOrder() {
 
         val userId = auth.currentUser?.uid ?: ""
-        val time: Long = System.currentTimeMillis()
-        val pushKey: String? = databaseReference.child("Order Details").push().key
+        val time = System.currentTimeMillis()
+        val orderId = databaseReference.child("Orders").push().key!!
 
-        val orderDetails = OrderDetails().apply {
-            userUid = userId
-            userName = name
-            foodNames = foodItemName
-            foodImages = foodItemImage
-            foodPrices = foodItemPrice
-            foodQuantities = foodItemQuantities
-            address = this@PayOutActivity.address
-            totalPrice = totalAmount
-            phoneNumber = phone
-            orderAccepted = false
-            paymentReceived = false
-            itemPushKey = pushKey
+        val order = OrderModel(
+            itemPushKey = orderId,
+            userUid = userId,
+            userName = name,
+            address = address,
+            phoneNumber = phone,
+            totalPrice = totalAmount,
+            foodNames = foodItemName,
+            foodImages = foodItemImage,
+            foodPrices = foodItemPrice,
+            foodQuantities = foodItemQuantities,
+            status = "pending",
+            assignedTo = "",
+            orderAccepted = false,
+            paymentReceived = false,
             currentTime = time
-        }
+        )
 
-        val orderReference =
-            databaseReference.child("Order Details").child(pushKey!!)
+        databaseReference.child("Orders").child(orderId)
+            .setValue(order)
+            .addOnSuccessListener {
 
-        orderReference.setValue(orderDetails).addOnSuccessListener {
-            val bottomSheetDialog = CongratsBottomSheet()
-            bottomSheetDialog.show(supportFragmentManager, "Test")
+                val bottomSheetDialog = CongratsBottomSheet()
+                bottomSheetDialog.show(supportFragmentManager, "Test")
 
-            removeItemFromCart()
-
-            addOrderToHistory(orderDetails)
-
-        }
-            .addOnFailureListener {
-                Toast.makeText(this, "Order Failed", Toast.LENGTH_SHORT).show()
+                removeItemFromCart()
+                addOrderToHistory(order)
             }
     }
-
-    private fun addOrderToHistory(orderDetails: OrderDetails) {
+    private fun addOrderToHistory(orderDetails: OrderModel) {
 
         val userId = auth.currentUser?.uid ?: return
 
