@@ -86,7 +86,11 @@ class PayOutActivity : AppCompatActivity() {
         val userId = auth.currentUser?.uid ?: ""
         val time = System.currentTimeMillis()
         val orderId = databaseReference.child("Orders").push().key!!
+        val restaurantLat = 26.8435   // Banasthali (example)
+        val restaurantLng = 75.5660
 
+        val customerLat = 26.9124     // dynamic hona chahiye ideally
+        val customerLng = 75.7873
         val order = OrderModel(
             itemPushKey = orderId,
             userUid = userId,
@@ -102,7 +106,12 @@ class PayOutActivity : AppCompatActivity() {
             assignedTo = "",
             orderAccepted = false,
             paymentReceived = false,
-            currentTime = time
+            currentTime = time,
+            restaurantLat = 26.8435,   // Banasthali (example)
+         restaurantLng = 75.5660,
+
+        customerLat = 26.9124 ,    // dynamic hona chahiye ideally
+        customerLng = 75.7873
         )
 
         databaseReference.child("Orders").child(orderId)

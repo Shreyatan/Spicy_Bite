@@ -70,36 +70,12 @@ class HistoryFragment : Fragment() {
         binding.recentbuyitem.setOnClickListener {
             seeItemRecentBuy()
         }
-        binding.receivedbutton.setOnClickListener {
-            updateOrderStatus()
-        }
+
 
         return binding.root
     }
 
-    private fun updateOrderStatus() {
-        if (listOfOrderItem.isNotEmpty()) {
-            val item = listOfOrderItem[0]
-            val itemPushKey = item.itemPushKey
-            val userId = auth.currentUser?.uid
 
-
-            val completedRef = database.reference
-                .child("CompletedOrder")
-                .child(itemPushKey!!)
-
-            completedRef.child("paymentReceived").setValue(true)
-
-            // ✅ User BuyHistory update
-            val userRef = database.reference
-                .child("user")
-                .child(userId!!)
-                .child("BuyHistory")
-                .child(itemPushKey)
-
-            userRef.child("paymentReceived").setValue(true)
-        }
-    }
 
     private fun seeItemRecentBuy() {
         listOfOrderItem.firstOrNull()?.let { recentBuy ->
@@ -167,17 +143,40 @@ class HistoryFragment : Fragment() {
                 .into(binding.recentImage)
         }
 
-        val isAccepted = recentItem.orderAccepted
+        val status = recentItem.status?.trim()?.lowercase()
         val isPaymentReceived = recentItem.paymentReceived ?: false
 
-        if (isAccepted && !isPaymentReceived) {
-            binding.orderestatus.background.setTint(Color.GREEN)
-            binding.receivedbutton.visibility = View.VISIBLE
-        } else if (isAccepted && isPaymentReceived) {
-            binding.orderestatus.background.setTint(Color.GREEN) // received
-            binding.receivedbutton.visibility = View.GONE
-        } else {
-            binding.receivedbutton.visibility = View.GONE
+        when (status) {
+
+            "delivered" -> {
+                if (recentItem.paymentReceived == true) {
+                    binding.statusText.text = "Delivered ✅"
+                    binding.orderestatus.setCardBackgroundColor(Color.parseColor("#4CAF50")) // Green
+                } else {
+                    binding.statusText.text = "Payment Pending 💰"
+                    binding.orderestatus.setCardBackgroundColor(Color.parseColor("#F44336")) // Red
+                }
+            }
+
+            "on the way" -> {
+                binding.statusText.text = "On The Way 🚚"
+                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#2196F3")) // Blue
+            }
+
+            "picked up" -> {
+                binding.statusText.text = "Picked Up 📦"
+                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#FFC107")) // Amber
+            }
+
+            "arrived" -> {   // 🔥 ADD THIS
+                binding.statusText.text = "Arrived 📍"
+                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#9C27B0")) // Purple
+            }
+
+            else -> {
+                binding.statusText.text = "Pending ⏳"
+                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#9E9E9E")) // Grey
+            }
         }
     }
 

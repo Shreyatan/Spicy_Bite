@@ -90,14 +90,23 @@
                     <!-- Green Circle -->
                     <androidx.cardview.widget.CardView
                         android:id="@+id/orderestatus"
-                        android:layout_width="40dp"
+                        android:layout_width="80dp"
                         android:layout_height="40dp"
-                        android:layout_marginEnd="32dp"
+                        android:layout_marginEnd="16dp"
+
                         android:backgroundTint="#B5BDB6"
                         app:cardCornerRadius="20dp"
                         app:layout_constraintBottom_toTopOf="@+id/receivedbutton"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
+                        <TextView
+                            android:id="@+id/statusText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Pending"
+                            android:textColor="@android:color/white"
+                            android:textSize="12sp"/>
 
                     </androidx.cardview.widget.CardView>
 
