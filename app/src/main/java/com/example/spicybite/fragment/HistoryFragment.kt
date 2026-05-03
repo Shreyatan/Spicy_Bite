@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.graphics.Color
 import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -51,7 +52,8 @@ class HistoryFragment : Fragment() {
         ) { position ->
 
             // 🔥 IMPORTANT: +1 lagana hai
-            val selectedOrder = listOfOrderItem[position + 1]
+            val selectedOrder = listOfOrderItem.getOrNull(position + 1)
+                ?: return@BuyAgainAdapter
 
             val intent = Intent(requireContext(), recentOrderItems::class.java)
             intent.putExtra("RecentBuyOrderItem", selectedOrder)
@@ -67,7 +69,7 @@ class HistoryFragment : Fragment() {
         binding.buyAgainRecyclerView.isNestedScrollingEnabled = false
         //retrieve and display the user order history
         retrieveBuyHistory()
-        binding.recentbuyitem.setOnClickListener {
+        binding.recentCard.setOnClickListener {
             seeItemRecentBuy()
         }
 
@@ -78,11 +80,16 @@ class HistoryFragment : Fragment() {
 
 
     private fun seeItemRecentBuy() {
-        listOfOrderItem.firstOrNull()?.let { recentBuy ->
-            val intent = Intent(requireContext(), recentOrderItems::class.java)
-            intent.putExtra("RecentBuyOrderItem", recentBuy)
-            startActivity(intent)
+        if (listOfOrderItem.isEmpty()) {
+            Toast.makeText(requireContext(), "No orders found", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        val recentBuy = listOfOrderItem.getOrNull(0)
+
+        val intent = Intent(requireContext(), recentOrderItems::class.java)
+        intent.putExtra("RecentBuyOrderItem", recentBuy)
+        startActivity(intent)
     }
 
     private fun retrieveBuyHistory() {
@@ -123,9 +130,6 @@ class HistoryFragment : Fragment() {
 
         val recentItem = listOfOrderItem.first()
 
-        Log.d("DEBUG", "Accepted: ${recentItem.orderAccepted}")
-        Log.d("DEBUG", "Payment: ${recentItem.paymentReceived}")
-
         binding.recentbuyitem.visibility = View.VISIBLE
 
         binding.recentFoodName.text =
@@ -144,42 +148,58 @@ class HistoryFragment : Fragment() {
         }
 
         val status = recentItem.status?.trim()?.lowercase()
-        val isPaymentReceived = recentItem.paymentReceived ?: false
+        val otp = recentItem.deliveryOTP ?: ""
 
         when (status) {
 
             "delivered" -> {
                 if (recentItem.paymentReceived == true) {
                     binding.statusText.text = "Delivered ✅"
-                    binding.orderestatus.setCardBackgroundColor(Color.parseColor("#4CAF50")) // Green
+                    binding.orderestatus.setCardBackgroundColor(Color.parseColor("#2E7D32")) // deep green
                 } else {
                     binding.statusText.text = "Payment Pending 💰"
-                    binding.orderestatus.setCardBackgroundColor(Color.parseColor("#F44336")) // Red
+                    binding.orderestatus.setCardBackgroundColor(Color.parseColor("#D32F2F") )// soft red)
                 }
+
+                binding.otpText.visibility = View.GONE   // ❌ hide after delivery
             }
 
-            "on the way" -> {
-                binding.statusText.text = "On The Way 🚚"
-                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#2196F3")) // Blue
+            "on the way", "arrived" -> {
+
+                binding.statusText.text = if (status == "on the way")
+                    "On The Way 🚚" else "Arrived 📍"
+
+                binding.orderestatus.setCardBackgroundColor(
+                    if (status == "on the way")
+                        Color.parseColor("#1976D2") // calm blue)
+                    else
+                        Color.parseColor("#7B1FA2") // elegant purple)
+                )
+
+                // 🔥 SHOW OTP HERE
+                binding.otpText.visibility = View.VISIBLE
+                binding.otpText.text =
+                    if (otp.isNotEmpty()) "Delivery OTP: $otp"
+                    else "Waiting for OTP..."
             }
 
             "picked up" -> {
                 binding.statusText.text = "Picked Up 📦"
-                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#FFC107")) // Amber
-            }
-
-            "arrived" -> {   // 🔥 ADD THIS
-                binding.statusText.text = "Arrived 📍"
-                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#9C27B0")) // Purple
+                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#F9A825") // warm amber
+                )
+                binding.otpText.visibility = View.GONE
             }
 
             else -> {
-                binding.statusText.text = "Pending ⏳"
-                binding.orderestatus.setCardBackgroundColor(Color.parseColor("#9E9E9E")) // Grey
+
+                binding.statusText.text = "Order Placed 🕐"
+                binding.orderestatus.setCardBackgroundColor(
+                    Color.parseColor("#757575") // neutral gray
+                )
+                binding.otpText.visibility = View.GONE
             }
         }
     }
-
     private fun setPreviousBuyItemsRecyclerView() {
 
         val buyAgainFoodName = mutableListOf<String>()
@@ -187,30 +207,26 @@ class HistoryFragment : Fragment() {
         val buyAgainFoodImage = mutableListOf<String>()
 
         for (i in 1 until listOfOrderItem.size) {
-            listOfOrderItem[i].foodNames?.firstOrNull()?.let { name ->
-                buyAgainFoodName.add(name)
 
-                listOfOrderItem[i].foodPrices?.firstOrNull()?.let { price ->
-                    buyAgainFoodPrice.add(price)
+            val item = listOfOrderItem[i]
 
-                    listOfOrderItem[i].foodImages?.firstOrNull()?.let { image ->
-                        buyAgainFoodImage.add(image)
-                    }
-                }
-            }
+            val name = item.foodNames?.firstOrNull()
+            val price = item.foodPrices?.firstOrNull()
+            val image = item.foodImages?.firstOrNull()
+
+            if (name != null) buyAgainFoodName.add(name)
+            if (price != null) buyAgainFoodPrice.add(price)
+            if (image != null) buyAgainFoodImage.add(image)
         }
 
-        // ✅ Update existing adapter data
-        buyAgainAdapter.apply {
-            this.buyAgainFoodName.clear()
-            this.buyAgainFoodPrice.clear()
-            this.buyAgainFoodImage.clear()
+        buyAgainAdapter.buyAgainFoodName.clear()
+        buyAgainAdapter.buyAgainFoodPrice.clear()
+        buyAgainAdapter.buyAgainFoodImage.clear()
 
-            this.buyAgainFoodName.addAll(buyAgainFoodName)
-            this.buyAgainFoodPrice.addAll(buyAgainFoodPrice)
-            this.buyAgainFoodImage.addAll(buyAgainFoodImage)
+        buyAgainAdapter.buyAgainFoodName.addAll(buyAgainFoodName)
+        buyAgainAdapter.buyAgainFoodPrice.addAll(buyAgainFoodPrice)
+        buyAgainAdapter.buyAgainFoodImage.addAll(buyAgainFoodImage)
 
-            notifyDataSetChanged()
-        }
+        buyAgainAdapter.notifyDataSetChanged()
     }
 }

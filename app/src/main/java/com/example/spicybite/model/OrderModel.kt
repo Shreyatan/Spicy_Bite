@@ -21,5 +21,6 @@ data class OrderModel(
     var restaurantLat: Double = 0.0,
     var restaurantLng: Double = 0.0,
     var customerLat: Double = 0.0,
-    var customerLng: Double = 0.0
+    var customerLng: Double = 0.0,
+    var deliveryOTP: String? = null
 ) : Serializable

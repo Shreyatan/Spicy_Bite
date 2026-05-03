@@ -21,7 +21,11 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
         <activity
-            android:name=".SignActivity"
+            android:name=".SignActivity" />
+
+        <activity android:name=".StartActivity"
+            android:exported="false"/>
+        <activity android:name=".SplashScreen"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -30,6 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

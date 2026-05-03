@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.example.spicybite.StartActivity
+import com.google.firebase.auth.FirebaseAuth
 
 @Suppress("DEPRECATION")
 class SplashScreen : AppCompatActivity() {
@@ -13,9 +14,18 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, StartActivity::class.java)
-            startActivity(intent)
+
+            val user = FirebaseAuth.getInstance().currentUser
+
+            if (user != null) {
+                // already logged in
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                startActivity(Intent(this, StartActivity::class.java))
+            }
+
             finish()
-        }, 2000)
+
+        }, 1500)
     }
 }

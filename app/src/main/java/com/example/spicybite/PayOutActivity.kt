@@ -72,17 +72,28 @@ class PayOutActivity : AppCompatActivity() {
             name = binding.name.text.toString()
             address = binding.address.text.toString()
             phone = binding.phone.text.toString()
+
+            // 🔥 CART CHECK (IMPORTANT FIX)
+            if (foodItemName.isEmpty()) {
+                Toast.makeText(this, "Cart is empty 🚫", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
             if(name.isBlank()||address.isBlank()||phone.isBlank()){
                 Toast.makeText(this,"please enter all details",Toast.LENGTH_SHORT).show()
 
-            }else{
-                placeOrder()
             }
+                placeOrder()
+
         }
     }
 
     private fun placeOrder() {
-
+        if (foodItemName.isEmpty()) {
+            Toast.makeText(this, "Cart empty ❌", Toast.LENGTH_SHORT).show()
+            return
+        }
         val userId = auth.currentUser?.uid ?: ""
         val time = System.currentTimeMillis()
         val orderId = databaseReference.child("Orders").push().key!!

@@ -64,6 +64,7 @@
                     android:textAllCaps="false"
                     android:background="@drawable/textviewshape"
                     android:elevation="6dp"
+                    android:backgroundTint="@color/endColor"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintTop_toTopOf="@id/tvPopular"
                     app:layout_constraintBottom_toBottomOf="@id/tvPopular"
