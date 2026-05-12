@@ -15,7 +15,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-
+import android.text.Editable
+import android.text.TextWatcher
+import androidx.core.content.ContextCompat
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
@@ -27,6 +29,8 @@ class SignActivity : AppCompatActivity() {
     private lateinit var email: String
     private lateinit var password: String
     private lateinit var username: String
+    private lateinit var middleName: String
+    private lateinit var lastName: String
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -48,17 +52,44 @@ class SignActivity : AppCompatActivity() {
 
         binding.createaccountbutton.setOnClickListener {
             username = binding.userName.text.toString()
+            middleName = binding.middleName.text.toString().trim()
+            lastName = binding.lastName.text.toString().trim()
             email = binding.emailAddress.text.toString().trim()
             password = binding.password.text.toString().trim()
 
-            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show()
-            } else if (!isValidEmail(email)) {
+            if (username.isEmpty()) {
+                binding.userName.error = "First name required"
+            }
+            else if (!username.matches(Regex("^[A-Za-z ]+$"))) {
+                binding.userName.error = "Only alphabets allowed"
+            }
+            // ✅ Middle Name Optional
+            else if (middleName.isNotEmpty() &&
+                !middleName.matches(Regex("^[A-Za-z ]+$"))) {
+
+                binding.middleName.error = "Only alphabets allowed"
+            }
+
+// ✅ Last Name Optional
+            else if (lastName.isNotEmpty() &&
+                !lastName.matches(Regex("^[A-Za-z ]+$"))) {
+
+                binding.lastName.error = "Only alphabets allowed"
+            }
+            else if (email.isEmpty()) {
+                binding.emailAddress.error = "Email required"
+            }
+            else if (!isValidEmail(email)) {
                 binding.emailAddress.error = "Enter valid email"
-            } else if (!isValidPassword(password)) {
+            }
+            else if (password.isEmpty()) {
+                binding.password.error = "Password required"
+            }
+            else if (!isValidPassword(password)) {
                 binding.password.error =
-                    "Password must contain uppercase, lowercase, number and special character"
-            } else {
+                    "Password must contain uppercase, lowercase, number & special character"
+            }
+            else {
                 CreateAccount(email, password)
             }
         }
@@ -105,7 +136,7 @@ class SignActivity : AppCompatActivity() {
 
                 val password = s.toString()
 
-                val pattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{7,}$")
+                val pattern = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$")
 
                 if (password.isEmpty()) {
                     // 👇 kuch nahi dikhega initially
@@ -114,7 +145,7 @@ class SignActivity : AppCompatActivity() {
                 } else if (password.matches(pattern)) {
                     // ✅ Strong
                     binding.passwordStatus.text = "Strong Password ✅"
-                    binding.passwordStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark))
+                    binding.passwordStatus.setTextColor(ContextCompat.getColor(this@SignActivity, android.R.color.holo_green_dark))
 
                 } else {
                     // ❌ Weak
@@ -124,6 +155,57 @@ class SignActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: android.text.Editable?) {}
+        })
+        binding.emailAddress.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                val email = s.toString().trim()
+
+                if (email.isNotEmpty() &&
+                    !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+                    binding.emailAddress.error = "Invalid Email"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.userName.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                val name = s.toString()
+
+                if (name.isNotEmpty() &&
+                    !name.matches(Regex("^[A-Za-z ]+$"))) {
+
+                    binding.userName.error = "Only alphabets allowed"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.lastName.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                val lastName = s.toString()
+
+                if (lastName.isNotEmpty() &&
+                    !lastName.matches(Regex("^[A-Za-z ]+$"))) {
+
+                    binding.lastName.error = "Only alphabets allowed"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
     private val launcher=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -138,11 +220,10 @@ class SignActivity : AppCompatActivity() {
                         val user = auth.currentUser
 
                         val userModel = UserModel(
-                            user?.displayName ?: "",
-                            user?.email ?: "",
-                            ""
+                            firstName = user?.displayName ?: "",
+                            email = user?.email ?: "",
+                            role = "user"
                         )
-
                         val userId = user?.uid
                         if (userId != null) {
                             database.child("user").child(userId).setValue(userModel)
@@ -175,9 +256,17 @@ class SignActivity : AppCompatActivity() {
 
     private fun saveUserData() {
         username=binding.userName.text.toString()
+        middleName = binding.middleName.text.toString().trim()
+        lastName = binding.lastName.text.toString().trim()
         email=binding.emailAddress.text.toString().trim()
         password=binding.password.text.toString().trim()
-        val user = UserModel(username, email, "")
+        val fullName = "$username $middleName $lastName".trim()
+        val user = UserModel( name=fullName,firstName = username,
+            middleName = middleName,
+            lastName = lastName,
+            email = email,
+            password = password,
+            role = "user")
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             database.child("user").child(userId).setValue(user)

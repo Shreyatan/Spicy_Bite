@@ -57,10 +57,38 @@
             android:id="@+id/userName"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="Name"
+            android:hint="First Name"
             android:textColor="@color/black"
             android:drawableStart="@drawable/user_plus"
             android:padding="12dp"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:background="@drawable/whitebutton"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/middleName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Middle Name (optional)"
+            android:textColor="@color/black"
+            android:drawableStart="@drawable/user_plus"
+            android:padding="12dp"
+            android:inputType="textPersonName"
+            android:maxLines="1"
+            android:background="@drawable/whitebutton"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/lastName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Last Name"
+            android:textColor="@color/black"
+            android:drawableStart="@drawable/user_plus"
+            android:padding="12dp"
+            android:inputType="textPersonName"
+            android:maxLines="1"
             android:background="@drawable/whitebutton"
             android:layout_marginTop="16dp"/>
 
@@ -69,9 +97,11 @@
             android:id="@+id/emailAddress"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="Email or Phone Number"
+            android:hint="Email Address"
             android:drawableStart="@drawable/mail"
             android:padding="12dp"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
             android:textColor="@color/black"
             android:background="@drawable/whitebutton"
             android:layout_marginTop="12dp"/>
@@ -90,7 +120,7 @@
             android:paddingEnd="45dp"
             android:textColor="@color/black"
             android:background="@drawable/whitebutton"
-
+android:maxLines="1"
             android:inputType="textPassword"/>
             <!-- Eye Icon -->
             <ImageView

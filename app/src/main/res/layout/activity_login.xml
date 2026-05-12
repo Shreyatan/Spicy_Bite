@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:textColor="@color/black"
-            android:hint="Email or Phone Number"
+            android:hint="Email Address"
             android:inputType="textEmailAddress"
             android:drawableStart="@drawable/mail"
             android:padding="12dp"

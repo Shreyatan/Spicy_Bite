@@ -80,12 +80,24 @@ class PayOutActivity : AppCompatActivity() {
             }
 
 
-            if(name.isBlank()||address.isBlank()||phone.isBlank()){
-                Toast.makeText(this,"please enter all details",Toast.LENGTH_SHORT).show()
+            if (
+                name.isBlank() || name == "null" ||
+                address.isBlank() || address == "null" ||
+                phone.isBlank() || phone == "null"
+            ) {
 
+                Toast.makeText(this, "Please complete profile details", Toast.LENGTH_SHORT).show()
+
+                return@setOnClickListener
             }
-                placeOrder()
+            else if (!phone.matches(Regex("^[0-9]{10}$"))) {
 
+                binding.phone.error = "Enter valid 10-digit number"
+
+                return@setOnClickListener
+            }
+
+            placeOrder()
         }
     }
 
