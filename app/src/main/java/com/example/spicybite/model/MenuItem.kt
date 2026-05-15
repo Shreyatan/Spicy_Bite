@@ -1,9 +1,11 @@
 package com.example.spicybite.model
 
 data class MenuItem(
-    val foodName: String?=null,
-    val foodPrice: String?=null,
-    val foodDescription: String?=null,
-    val foodIngrediant: String?=null,
-    val foodImage: String?=null,
+    var foodName: String? = null,
+    var foodPrice: String? = null,
+    var foodImage: String? = null,
+    var foodCategory: String? = null,
+    var foodDescription: String? = null,   // ✅ ADD THIS
+    var foodIngrediant: String? = null,
+    var itemAvailable: Boolean? = true
 )

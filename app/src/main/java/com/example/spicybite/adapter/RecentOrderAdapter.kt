@@ -29,11 +29,16 @@ class RecentOrderAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.binding.foodName.text = names[position]
-        holder.binding.foodPrice.text = prices[position]
-
+        val name = names[position]
+        val price = prices[position]
         val qty = if (position < quantities.size) quantities[position] else 1
+
+        holder.binding.foodName.text = name
+        holder.binding.foodPrice.text = price
         holder.binding.foodQuantity.text = qty.toString()
+
+        val p = price.toIntOrNull() ?: 0
+        holder.binding.tvSubtotal.text = "Total: ₹${p * qty}"
 
         Glide.with(holder.itemView.context)
             .load(images[position])

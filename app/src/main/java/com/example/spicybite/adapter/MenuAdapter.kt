@@ -14,7 +14,6 @@ import com.example.spicybite.model.MenuItem
 class MenuAdapter(
     private val menuItems: List<MenuItem>,
     private val requireContext: Context,
-
 ) : RecyclerView.Adapter<MenuAdapter.MenuViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
@@ -28,57 +27,44 @@ class MenuAdapter(
     }
 
     override fun onBindViewHolder(holder: MenuViewHolder, position: Int) {
-        holder.bind(position)
+        holder.bind(menuItems[position])
+
+        holder.itemView.setOnClickListener {
+            val item = menuItems[position]
+
+            val intent = Intent(requireContext, DetailsActivity::class.java).apply {
+                putExtra("MenuItemName", item.foodName)
+                putExtra("MenuItemPrice", item.foodPrice)
+                putExtra("MenuItemDescription", item.foodDescription ?: "") // ✅ FIX
+                putExtra("MenuItemIngredients", item.foodIngrediant ?: "")
+                putExtra("MenuItemImage", item.foodImage)
+            }
+
+            requireContext.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = menuItems.size
 
-    inner class MenuViewHolder(private val binding: MenuItemBinding) :
+    class MenuViewHolder(private val binding: MenuItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        init{
-            binding.root.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    openDetailsActivity(position)
-                }
 
+        fun bind(menuItem: MenuItem) {
 
-            }
-        }
+            binding.menuFoodName.text = menuItem.foodName ?: ""
+            binding.menuPrice.text = "₹${menuItem.foodPrice ?: "0"}"
 
-        private fun openDetailsActivity(position: Int) {
-            val menuItem:MenuItem = menuItems[position]
+            binding.menuCategory.text = menuItem.foodCategory ?: "Food"
 
-            //intent to open details activity and pass data
-            val intent = Intent(requireContext, DetailsActivity::class.java).apply{
-                putExtra("MenuItemName",menuItem.foodName)
-                putExtra("MenuItemPrice",menuItem.foodPrice)
-                putExtra("MenuItemDescription",menuItem.foodDescription)
-                putExtra("MenuItemIngredients",menuItem.foodIngrediant)
-                putExtra("MenuItemImage",menuItem.foodImage)
-            }
-
-            //start the detail activity
-            requireContext.startActivity(intent)
-        }
-
-
-
-    fun bind(position: Int) {
-
-        val menuItem = menuItems[position]
-
-        binding.apply {
-
-            menuFoodName.text = menuItem.foodName
-            menuPrice.text = menuItem.foodPrice
-
-            val uri = Uri.parse(menuItem.foodImage)
+            binding.menuStatus.text =
+                if (menuItem.itemAvailable == true)
+                    "🟢 Available"
+                else
+                    "🔴 Out of stock"
 
             Glide.with(binding.root.context)
-                .load(uri)
-                .into(menuImage)
+                .load(menuItem.foodImage)
+                .into(binding.menuImage)
         }
-    }
     }
 }

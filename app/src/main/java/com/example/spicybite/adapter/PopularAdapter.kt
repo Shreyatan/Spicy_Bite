@@ -5,45 +5,71 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.spicybite.DetailsActivity
 import com.example.spicybite.databinding.PopularItemBinding
+import com.example.spicybite.model.MenuItem
 
-class PopularAdapter (private val items:List<String>,private val price:List<String>,private val image:List<Int>, private val requireContext: Context) : RecyclerView.Adapter<PopularAdapter.PopularViewHolder>(){
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): PopularViewHolder {
-        return PopularViewHolder(PopularItemBinding.inflate(LayoutInflater.from(parent.context),parent,false))
+class PopularAdapter(
+    private val items: List<MenuItem>,
+    private val requireContext: Context
+) : RecyclerView.Adapter<PopularAdapter.PopularViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularViewHolder {
+        val binding = PopularItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return PopularViewHolder(binding)
     }
 
-    override fun onBindViewHolder(
-        holder: PopularViewHolder,
-        position: Int
-    ) {
-       val item= items[position]
-        val images=image[position]
-        val price=price[position]
-        holder.bind(item,price,images)
+    override fun onBindViewHolder(holder: PopularViewHolder, position: Int) {
+        holder.bind(items[position])
+
         holder.itemView.setOnClickListener {
-            //setonclick listener detailed
-            val intent= Intent(requireContext, DetailsActivity::class.java)
-            intent.putExtra("menuFoodName",items.get(position))
-            intent.putExtra("menuImage",image.get(position))
+            val item = items[position]
+
+            val intent = Intent(requireContext, DetailsActivity::class.java).apply {
+                putExtra("menuFoodName", item.foodName)
+                putExtra("menuImage", item.foodImage)
+                putExtra("menuPrice", item.foodPrice)
+                putExtra("menuCategory", item.foodCategory)
+                putExtra("menuDescription", item.foodDescription)
+            }
+
             requireContext.startActivity(intent)
         }
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount(): Int = items.size
 
-    class PopularViewHolder (private  val binding: PopularItemBinding): RecyclerView.ViewHolder(binding.root){
-      private val imageView = binding.imgFood
-        fun bind(item:String,price:String,images:Int){
-            binding.tvFoodName.text=item
-            binding.tvPrice.text=price
-            imageView.setImageResource(images)
+    class PopularViewHolder(
+        private val binding: PopularItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
+        fun bind(item: MenuItem) {
+
+            binding.tvFoodName.text = item.foodName
+            binding.tvPrice.text = "₹${item.foodPrice}"
+
+            // Category
+            binding.menuCategory.text = item.foodCategory ?: "Category"
+
+            // Status
+            binding.menuStatus.text = if (item.itemAvailable == true) {
+                "🟢 Available"
+            } else {
+                "🔴 Out of Stock"
+            }
+
+            // Image
+            Glide.with(binding.root.context)
+                .load(item.foodImage)
+                .into(binding.imgFood)
+
+            // Add to cart text (optional UI)
+            binding.menuAddToCart.text = "Add To Cart"
         }
     }
 }

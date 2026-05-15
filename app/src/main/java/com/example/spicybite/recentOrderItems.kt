@@ -1,10 +1,7 @@
 package com.example.spicybite
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.spicybite.adapter.RecentOrderAdapter
 import com.example.spicybite.databinding.ActivityRecentOrderItemsBinding
@@ -20,16 +17,24 @@ class recentOrderItems : AppCompatActivity() {
         binding = ActivityRecentOrderItemsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 🔥 Get data from intent
-        val orderDetails =
-            intent.getSerializableExtra("RecentBuyOrderItem") as? OrderModel
+        // 🔥 GET DATA SAFELY
+        val orderDetails = intent.getSerializableExtra("RecentBuyOrderItem") as? OrderModel
 
         val foodNames = orderDetails?.foodNames ?: arrayListOf()
         val foodPrices = orderDetails?.foodPrices ?: arrayListOf()
         val foodImages = orderDetails?.foodImages ?: arrayListOf()
         val foodQuantities = orderDetails?.foodQuantities ?: arrayListOf()
-        // 🔥 Setup RecyclerView
-        binding.recyclerViewRecent.layoutManager = LinearLayoutManager(this)
+
+        // ❗ EMPTY CHECK (IMPORTANT)
+        if (foodNames.isEmpty()) {
+            binding.recyclerViewRecent.visibility = android.view.View.GONE
+            return
+        }
+
+        // 🔥 RecyclerView Setup
+        binding.recyclerViewRecent.layoutManager =
+            LinearLayoutManager(this)
+
         binding.recyclerViewRecent.adapter =
             RecentOrderAdapter(foodNames, foodPrices, foodImages, foodQuantities)
 
