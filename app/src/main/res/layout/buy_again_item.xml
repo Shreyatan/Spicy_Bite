@@ -58,6 +58,7 @@
                 android:textSize="20sp"
                 android:fontFamily="@font/yeonsung_regular"
                 android:layout_marginTop="12dp"
+
                 app:layout_constraintStart_toStartOf="@id/recentFoodName"
                 app:layout_constraintTop_toBottomOf="@id/recentFoodName"/>
             <!-- Green Circle -->
@@ -74,8 +75,23 @@
                 android:background="@drawable/addtocartshape"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
+                />
+            <!-- ⭐ Rate Now Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRateNow"
+                android:layout_width="85dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/addtocartshape"
+                android:fontFamily="@font/yeonsung_regular"
+                android:text="⭐ Rate Now"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnBuyAgain" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

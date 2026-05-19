@@ -5,6 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.View
+import androidx.fragment.app.FragmentActivity
+import com.example.spicybite.FeedbackBottomSheet
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.spicybite.PayOutActivity
@@ -15,6 +18,9 @@ class BuyAgainAdapter(
     val buyAgainFoodName: MutableList<String>,
     val buyAgainFoodPrice: MutableList<String>,
     val buyAgainFoodImage: MutableList<String>,
+    val feedbackStatus: MutableList<Boolean>,
+    val orderStatus: MutableList<String>,
+    val orderIdList: MutableList<String>,
     private val onItemClick: (Int) -> Unit
 ) : RecyclerView.Adapter<BuyAgainAdapter.BuyAgainViewHolder>() {
 
@@ -31,7 +37,10 @@ class BuyAgainAdapter(
         holder.bind(
             buyAgainFoodName[position],
             buyAgainFoodPrice[position],
-            buyAgainFoodImage[position]
+            buyAgainFoodImage[position],
+            feedbackStatus[position],
+            orderStatus[position],
+            orderIdList[position]
         )
     }
 
@@ -42,7 +51,14 @@ class BuyAgainAdapter(
         private val binding: BuyAgainItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(foodName: String, foodPrice: String, foodImage: String) {
+        fun bind(
+            foodName: String,
+            foodPrice: String,
+            foodImage: String,
+            feedbackDone: Boolean,
+            status: String,
+            orderId: String
+        ){
 
             binding.recentFoodName.text = foodName
             binding.recentFoodPrice.text = foodPrice
@@ -51,6 +67,15 @@ class BuyAgainAdapter(
                 Glide.with(binding.root.context)
                     .load(uri)
                     .into(binding.recentImage)
+            }
+
+
+            val orderStatusLower = status.trim().lowercase()
+
+            if (orderStatusLower == "delivered" && !feedbackDone) {
+                binding.btnRateNow.visibility = View.VISIBLE
+            } else {
+                binding.btnRateNow.visibility = View.GONE
             }
             // ✅ 1. ITEM CLICK → OPEN DETAILS
             binding.root.setOnClickListener {
@@ -73,6 +98,23 @@ class BuyAgainAdapter(
 
                 context.startActivity(intent)
             }
-        }
+            binding.btnRateNow.setOnClickListener {
+
+                val context = binding.root.context
+
+                if (context is FragmentActivity) {
+
+
+                    val sheet = FeedbackBottomSheet(
+                        orderId,
+                        foodName
+                    )
+
+                    sheet.show(context.supportFragmentManager, "FeedbackSheet")
+
+
+                }
+            }
         }
     }
+}

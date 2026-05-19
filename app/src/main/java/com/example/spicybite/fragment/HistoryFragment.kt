@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.spicybite.FeedbackBottomSheet
 import com.example.spicybite.R
 import com.example.spicybite.adapter.BuyAgainAdapter
 import com.example.spicybite.databinding.FragmentHistoryBinding
@@ -48,9 +49,11 @@ class HistoryFragment : Fragment() {
         buyAgainAdapter = BuyAgainAdapter(
             mutableListOf(),
             mutableListOf(),
+            mutableListOf(),
+            mutableListOf(),
+            mutableListOf(),
             mutableListOf()
         ) { position ->
-
             // 🔥 IMPORTANT: +1 lagana hai
             val selectedOrder = listOfOrderItem.getOrNull(position + 1)
                 ?: return@BuyAgainAdapter
@@ -128,8 +131,22 @@ class HistoryFragment : Fragment() {
 
         if (listOfOrderItem.isEmpty()) return
 
+
         val recentItem = listOfOrderItem.first()
 
+        val status = recentItem.status?.trim()?.lowercase()
+        val feedbackDone = recentItem.feedbackSubmitted == true
+        if (status == "delivered" && recentItem.paymentReceived == true) {
+
+            if (feedbackDone) {
+                binding.btnRate.visibility = View.GONE
+            } else {
+                binding.btnRate.visibility = View.VISIBLE
+            }
+
+        } else {
+            binding.btnRate.visibility = View.GONE
+        }
         binding.recentbuyitem.visibility = View.VISIBLE
 
         binding.recentFoodName.text =
@@ -147,7 +164,7 @@ class HistoryFragment : Fragment() {
                 .into(binding.recentImage)
         }
 
-        val status = recentItem.status?.trim()?.lowercase()
+
         val otp = recentItem.deliveryOTP ?: ""
 
         when (status) {
@@ -199,12 +216,24 @@ class HistoryFragment : Fragment() {
                 binding.otpText.visibility = View.GONE
             }
         }
+        binding.btnRate.setOnClickListener {
+            val orderId = recentItem.itemPushKey ?: return@setOnClickListener
+            val foodName = recentItem.foodNames?.firstOrNull() ?: ""
+
+            val sheet = FeedbackBottomSheet(
+                orderId,
+                foodName
+            )
+            sheet.show(parentFragmentManager, "FeedbackSheet")
+        }
     }
     private fun setPreviousBuyItemsRecyclerView() {
-
+        val orderIdList = mutableListOf<String>()
         val buyAgainFoodName = mutableListOf<String>()
         val buyAgainFoodPrice = mutableListOf<String>()
         val buyAgainFoodImage = mutableListOf<String>()
+        val feedbackStatusList = mutableListOf<Boolean>()
+        val orderStatusList = mutableListOf<String>()
 
         for (i in 1 until listOfOrderItem.size) {
 
@@ -214,6 +243,11 @@ class HistoryFragment : Fragment() {
             val price = item.foodPrices?.firstOrNull()
             val image = item.foodImages?.firstOrNull()
 
+            feedbackStatusList.add(item.feedbackSubmitted == true)
+            orderStatusList.add(item.status ?: "")
+
+            orderIdList.add(item.itemPushKey ?: "")
+
             if (name != null) buyAgainFoodName.add(name)
             if (price != null) buyAgainFoodPrice.add(price)
             if (image != null) buyAgainFoodImage.add(image)
@@ -222,11 +256,16 @@ class HistoryFragment : Fragment() {
         buyAgainAdapter.buyAgainFoodName.clear()
         buyAgainAdapter.buyAgainFoodPrice.clear()
         buyAgainAdapter.buyAgainFoodImage.clear()
+        buyAgainAdapter.feedbackStatus.clear()
+        buyAgainAdapter.orderStatus.clear()
+        buyAgainAdapter.orderIdList.clear()
 
         buyAgainAdapter.buyAgainFoodName.addAll(buyAgainFoodName)
         buyAgainAdapter.buyAgainFoodPrice.addAll(buyAgainFoodPrice)
         buyAgainAdapter.buyAgainFoodImage.addAll(buyAgainFoodImage)
-
+        buyAgainAdapter.feedbackStatus.addAll(feedbackStatusList)
+        buyAgainAdapter.orderStatus.addAll(orderStatusList)
+        buyAgainAdapter.orderIdList.addAll(orderIdList)
         buyAgainAdapter.notifyDataSetChanged()
     }
 }

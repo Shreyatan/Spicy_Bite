@@ -97,6 +97,17 @@
                 android:layout_marginTop="6dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐ 0.0 (0)"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFA000"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="@id/menuCategory"
+                app:layout_constraintTop_toBottomOf="@id/menuStatus"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

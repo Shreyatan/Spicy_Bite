@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpicyBite">
         <activity
+            android:name=".FeedbackButtonSheet"
+            android:exported="false" />
+        <activity
             android:name=".recentOrderItems"
             android:exported="false" />
         <activity
@@ -20,12 +23,12 @@
             android:exported="false" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".SignActivity" />
         <activity
-            android:name=".SignActivity" />
-
-        <activity android:name=".StartActivity"
-            android:exported="false"/>
-        <activity android:name=".SplashScreen"
+            android:name=".StartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SplashScreen"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -34,7 +37,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

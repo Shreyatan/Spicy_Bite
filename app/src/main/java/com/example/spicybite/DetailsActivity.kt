@@ -27,7 +27,7 @@ class DetailsActivity : AppCompatActivity() {
     private var foodIngrediant : String? = null
     private var foodImage: String? = null
     private lateinit var auth: FirebaseAuth
-
+    private var itemAvailable: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailsBinding.inflate(layoutInflater)
@@ -41,6 +41,7 @@ class DetailsActivity : AppCompatActivity() {
         foodDescriptions = intent.getStringExtra("MenuItemDescription")
         foodIngrediant= intent.getStringExtra("MenuItemIngredients")
         foodImage = intent.getStringExtra("MenuItemImage")
+        itemAvailable = intent.getBooleanExtra("itemAvailable", true)
 
         with(binding) {
             detailFoodName.text = foodName
@@ -51,6 +52,12 @@ class DetailsActivity : AppCompatActivity() {
                 .load(Uri.parse(foodImage))
                 .into(detailedfoodimage)
 
+            if (itemAvailable != true) {
+
+                detailbutton.isEnabled = false
+                detailbutton.text = "Out Of Stock"
+                detailbutton.alpha = 0.6f
+            }
         }
         binding.imageButton.setOnClickListener {
             finish()
@@ -63,6 +70,16 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun addItemToCart() {
 
+        if (itemAvailable != true) {
+
+            Toast.makeText(
+                this,
+                "Item is currently out of stock",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
         val database = FirebaseDatabase.getInstance().reference
         val userId = auth.currentUser?.uid
 

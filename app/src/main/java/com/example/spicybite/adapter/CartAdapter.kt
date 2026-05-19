@@ -80,17 +80,27 @@ class CartAdapter(
 
                 val key = item.itemKey
 
-                if (key != null) {
+                // 🔥 STORE POSITION FIRST
+                val position = holder.bindingAdapterPosition
+
+                if (key != null && position != RecyclerView.NO_POSITION) {
 
                     cartItemsReference.child(key).removeValue()
                         .addOnSuccessListener {
 
+                            // 🔥 REMOVE FROM LOCAL LIST
+                            cartItems.removeAt(position)
 
-                            Toast.makeText(context,"Item Deleted",Toast.LENGTH_SHORT).show()
+                            // 🔥 UPDATE RECYCLERVIEW
+                            notifyItemRemoved(position)
+                            notifyItemRangeChanged(position, cartItems.size)
+
+                            Toast.makeText(context, "Item Deleted", Toast.LENGTH_SHORT).show()
                         }
 
                         .addOnFailureListener {
-                            Toast.makeText(context,"Delete Failed",Toast.LENGTH_SHORT).show()
+
+                            Toast.makeText(context, "Delete Failed", Toast.LENGTH_SHORT).show()
                         }
                 }
             }

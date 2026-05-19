@@ -9,6 +9,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
+    <color name="orange">#FF9800</color>
     <!-- Food App Colors -->
     <color name="startColor">#53E88B</color>
     <color name="endColor">#15BE77</color>
