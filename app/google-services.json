@@ -1,82 +1,27 @@
 {
   "project_info": {
-    "project_number": "556613648186",
-    "firebase_url": "https://admin-spicy-bite-default-rtdb.firebaseio.com",
-    "project_id": "admin-spicy-bite",
-    "storage_bucket": "admin-spicy-bite.firebasestorage.app"
+    "project_number": "523737944435",
+    "firebase_url": "https://adminspicybite-8e69b-default-rtdb.firebaseio.com",
+    "project_id": "adminspicybite-8e69b",
+    "storage_bucket": "adminspicybite-8e69b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:556613648186:android:2078e4c4039fb3f8b6da03",
-        "android_client_info": {
-          "package_name": "com.example.adminspicybite"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "556613648186-cu1399fnjjafe96qpcb1hgau5l0siq91.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.adminspicybite",
-            "certificate_hash": "e09b4872be5e8dce269ba49f5f9497aa975e8c86"
-          }
-        },
-        {
-          "client_id": "556613648186-prfgfnmlevq8pmtf1r0amo1k1irsv6lp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBz21vDTXg2-9oO4kPd2GE3tih_IfyxvbI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "556613648186-prfgfnmlevq8pmtf1r0amo1k1irsv6lp.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:556613648186:android:6f372915d3492afdb6da03",
+        "mobilesdk_app_id": "1:523737944435:android:8d79019d52ddcb2f617506",
         "android_client_info": {
           "package_name": "com.example.spicybite"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "556613648186-q2jkhbnmvqip0ghs5mme7q6onu62aaru.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.spicybite",
-            "certificate_hash": "e09b4872be5e8dce269ba49f5f9497aa975e8c86"
-          }
-        },
-        {
-          "client_id": "556613648186-prfgfnmlevq8pmtf1r0amo1k1irsv6lp.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBz21vDTXg2-9oO4kPd2GE3tih_IfyxvbI"
+          "current_key": "AIzaSyCbcOLlgMH3DudIN4PgFEmQ8smyVHpLjKA"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "556613648186-prfgfnmlevq8pmtf1r0amo1k1irsv6lp.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
