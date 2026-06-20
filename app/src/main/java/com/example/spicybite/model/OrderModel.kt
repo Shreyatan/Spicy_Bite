@@ -22,6 +22,7 @@ data class OrderModel(
     var restaurantLng: Double = 0.0,
     var customerLat: Double = 0.0,
     var customerLng: Double = 0.0,
+    var paymentMethod: String? = "Cash On Delivery",
     var deliveryOTP: String? = null,
     var feedbackSubmitted: Boolean = false,
 ) : Serializable

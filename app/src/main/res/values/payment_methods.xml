@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="payment_methods">
+        <item>Select Payment Method</item>
+        <item>UPI</item>
+        <item>Credit/Debit Card</item>
+        <item>Net Banking</item>
+        <item>Cash On Delivery</item>
+    </string-array>
+</resources>

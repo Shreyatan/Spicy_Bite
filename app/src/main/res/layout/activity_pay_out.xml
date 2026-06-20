@@ -175,12 +175,13 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <ImageView
-                android:id="@+id/cod"
-                android:layout_width="544dp"
+            <Spinner
+                android:id="@+id/spinnerPaymentMethod"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/cashondelivery" />
+                android:layout_marginEnd="10dp"
+                android:background="@android:drawable/btn_dropdown"
+                android:spinnerMode="dropdown"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
